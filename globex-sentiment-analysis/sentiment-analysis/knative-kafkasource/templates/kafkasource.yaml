@@ -3,6 +3,8 @@ apiVersion: sources.knative.dev/v1beta1
 kind: KafkaSource
 metadata:
   name: {{ include "knative-kafkasource.name" . }}
+  labels:
+    app.kubernetes.io/part-of: knative
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     {{- include "knative-kafkasource.argocd-syncwave" . | nindent 4 }}

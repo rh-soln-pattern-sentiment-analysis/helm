@@ -4,6 +4,8 @@ apiVersion: eventing.knative.dev/v1alpha1
 kind: KafkaSink
 metadata:
   name: {{ .name }}
+  labels:
+    app.kubernetes.io/part-of: knative-sinks
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     {{- include "knative-kafkasink.argocd-syncwave" $ | nindent 4 }}

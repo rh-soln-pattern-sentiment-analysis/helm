@@ -10,6 +10,7 @@ metadata:
   labels:
     {{- include "globex-web-reviews.labels" . | nindent 4 }}
     app.openshift.io/runtime: nodejs
+    app.kubernetes.io/part-of: globex
   name: {{ include "globex-web-reviews.name" . }}
 spec:
   replicas: {{ .Values.replicaCount }}

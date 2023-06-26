@@ -4,6 +4,8 @@ apiVersion: eventing.knative.dev/v1
 kind: Trigger
 metadata:
   name: {{ .name }}
+  labels:
+    app.kubernetes.io/part-of: knative
 spec:
   broker: {{ .broker }}
   filter:

@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "reviews-db.labels" . | nindent 4 }}
     app.openshift.io/runtime: postgresql
+    app.kubernetes.io/part-of: globex
   annotations:
     {{- include "reviews-db.argocd-syncwave" . | nindent 4 }}
 spec:

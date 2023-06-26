@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "reviews-simulator.labels" . | nindent 4 }}
     app.openshift.io/runtime: quarkus
+    app.kubernetes.io/part-of: globex
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
