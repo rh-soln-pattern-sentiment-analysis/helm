@@ -41,3 +41,6 @@ dependencies:
   - name: globex-web-reviews
     version: 0.1.0
     repository: file://globex-web-reviews
+  - name: reviews-simulator
+    version: 0.1.0
+    repository: file://reviews-simulator
