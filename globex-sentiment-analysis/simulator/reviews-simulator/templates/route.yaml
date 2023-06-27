@@ -1,0 +1,23 @@
+{{- if .Values.route.enabled -}}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ include "reviews-simulator.name" . }}
+  labels:
+    {{- include "reviews-simulator.labels" . | nindent 4 }}
+spec:
+  {{ if .Values.route.host }}
+  host: {{ .Values.route.host }}
+  {{ end }}
+  to:
+    kind: Service
+    name: {{ include "reviews-simulator.name" . }}
+    weight: 100
+  port:
+    targetPort: {{ .Values.service.portName }}
+  wildcardPolicy: None
+  {{- if .Values.route.tlsEnabled }}
+  tls:
+    {{- toYaml .Values.route.tls | nindent 4 }}
+  {{ end }}
+{{ end }}

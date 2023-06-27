@@ -1,0 +1,69 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/globex-sentiment-analysis/reviews-simulator
+  pullPolicy: IfNotPresent
+  tag: 26a97ba
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+  containerPort: 8080
+  portName: http
+
+route:
+  enabled: false
+  host:
+  tlsEnabled: true
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 250Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /q/health/live
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 3
+
+readinessProbe:
+  httpGet:
+    path: /q/health/ready
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+
+podSecurityContext: 
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+urls:
+  product-reviews: http://product-reviews:8080
+  globex-store: http://globex-store-app.globex-user1.svc.cluster.local:8080

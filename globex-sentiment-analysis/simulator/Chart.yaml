@@ -1,0 +1,46 @@
+apiVersion: v2
+name: globex-sentiment-analysis
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: knative-kafka
+    version: 0.1.0
+    repository: file://knative-kafka
+  - name: kafka-topics
+    version: 0.1.0
+    repository: file://kafka-topics
+  - name: knative-kafkasink
+    version: 0.1.0
+    repository: file://knative-kafkasink
+  - name: knative-broker
+    version: 0.1.0
+    repository: file://knative-broker
+  - name: knative-kafkasource
+    version: 0.1.0
+    repository: file://knative-kafkasource
+  - name: reviews-db
+    version: 0.1.0
+    repository: file://reviews-db
+  - name: product-reviews
+    version: 0.1.0
+    repository: file://product-reviews
+  - name: persist-reviews
+    version: 0.1.0
+    repository: file://persist-reviews
+  - name: aiml-moderate-reviews
+    version: 0.1.0
+    repository: file://aiml-moderate-reviews
+  - name: aiml-sentiment-reviews
+    version: 0.1.0
+    repository: file://aiml-sentiment-reviews
+  - name: knative-triggers
+    version: 0.1.0
+    repository: file://knative-triggers
+  - name: globex-web-reviews
+    version: 0.1.0
+    repository: file://globex-web-reviews
+  - name: reviews-simulator
+    version: 0.1.0
+    repository: file://reviews-simulator
