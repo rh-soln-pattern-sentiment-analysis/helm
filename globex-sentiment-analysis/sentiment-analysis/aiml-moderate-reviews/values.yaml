@@ -1,5 +1,5 @@
 image:
-  repository: quay.io/globex-sentiment-analysis/abusive-language-analysis-model-cloudevents
+  repository: quay.io/globex-sentiment-analysis/sentiment-analysis-analyze-reviews
   pullPolicy: IfNotPresent
   tag: model-packaged
 
