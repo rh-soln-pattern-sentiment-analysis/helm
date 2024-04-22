@@ -22,7 +22,3 @@ gunicorn:
 cloudEvents:
   source: review-moderated
   type: review-moderated-event
-
-kafkaSink:
-  moderated: ""
-  denied: ""
