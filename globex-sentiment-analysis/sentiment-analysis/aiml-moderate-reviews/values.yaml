@@ -1,7 +1,7 @@
 image:
   repository: quay.io/globex-sentiment-analysis/abusive-language-analysis-model-cloudevents
   pullPolicy: IfNotPresent
-  tag: latest
+  tag: model-packaged
 
 nameOverride: ""
 fullnameOverride: ""

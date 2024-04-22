@@ -20,5 +20,8 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "aiml-sentiment-reviews.name" . }}
+          env:
+            - name: K_SINK
+              value: ""
           resources:
             {{- toYaml .Values.resources | nindent 12 }}             

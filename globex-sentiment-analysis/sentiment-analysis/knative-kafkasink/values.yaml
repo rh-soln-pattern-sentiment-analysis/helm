@@ -6,16 +6,8 @@ secret:
     syncwave: "-2"
 
 kafkasink:
- - name: reviews-sink
-   topic: globex.reviews
-   partitions: 1
-   contentMode: binary
  - name: moderated-reviews-sink
    topic: reviews.moderated
-   partitions: 1
-   contentMode: binary
- - name: denied-reviews-sink
-   topic: reviews.denied
    partitions: 1
    contentMode: binary
  - name: reviews-sentiment-sink
@@ -29,6 +21,7 @@ kafka:
   clientSecret: ""
   securityProtocol: ""
   saslMechanism: ""
+  secret: kafka-secret
 
 argocd:
   enabled: true

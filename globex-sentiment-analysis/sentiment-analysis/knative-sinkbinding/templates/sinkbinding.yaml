@@ -1,0 +1,19 @@
+{{- range .Values.sinkbinding }}
+---
+apiVersion: sources.knative.dev/v1
+kind: SinkBinding
+metadata:
+  name: {{ .name }}
+spec:
+  sink:
+    ref:
+      apiVersion: {{ .sink.ref.apiVersion }}
+      kind: {{ .sink.ref.kind }}
+      name: {{ .sink.ref.name }}
+      namespace: {{ $.Release.Namespace }}
+  subject:
+    apiVersion: {{ .subject.apiVersion }}
+    kind: {{ .subject.kind }}
+    name: {{ .subject.name }}
+    namespace: {{ $.Release.Namespace }}
+{{- end }}

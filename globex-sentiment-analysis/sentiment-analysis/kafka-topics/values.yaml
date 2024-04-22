@@ -10,9 +10,6 @@ kafka:
     - name: reviews.moderated
       partitions: 1
       retention: -1
-    - name: reviews.denied
-      partitions: 1
-      retention: -1
     - name: reviews.sentiment
       partitions: 1
       retention: -1

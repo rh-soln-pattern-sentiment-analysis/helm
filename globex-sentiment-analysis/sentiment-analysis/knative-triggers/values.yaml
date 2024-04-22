@@ -6,6 +6,7 @@ triggers:
     filter:
       source: review-moderated
       type: review-moderated-event
+      globexreviewabusive: '0'
     service: persist-reviews
     uri: /review/submit
   - name: moderate-reviews-trigger

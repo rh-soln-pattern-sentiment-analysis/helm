@@ -1,0 +1,21 @@
+sinkbinding:
+  - name: aiml-sentiment-reviews-to-reviews-sentiment-sink
+    sink:
+      ref:
+        apiVersion: eventing.knative.dev/v1alpha1
+        kind: KafkaSink
+        name: reviews-sentiment-sink
+    subject:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: aiml-sentiment-reviews
+  - name: aiml-moderate-reviews-to-moderated-reviews-sink
+    sink:
+      ref:
+        apiVersion: eventing.knative.dev/v1alpha1
+        kind: KafkaSink
+        name: moderated-reviews-sink
+    subject:
+      apiVersion: serving.knative.dev/v1
+      kind: Service
+      name: aiml-moderate-reviews
