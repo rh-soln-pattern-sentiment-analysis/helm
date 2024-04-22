@@ -1,0 +1,56 @@
+{{- if eq .Values.scope.namespace true -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "streams-console.name" . }}-podmonitor
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+  labels:
+    {{- include "streams-console.labels" . | nindent 4 }}
+    app: {{ include "streams-console.name" . }}-monitor
+spec:
+  podMetricsEndpoints:
+    - path: /metrics
+      port: tcp-prometheus
+      relabelings:
+        - action: labelmap
+          regex: __meta_kubernetes_pod_label_(strimzi_io_.+)
+          replacement: $1
+          separator: ;
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          separator: ;
+          sourceLabels:
+            - __meta_kubernetes_namespace
+          targetLabel: namespace
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          separator: ;
+          sourceLabels:
+            - __meta_kubernetes_pod_name
+          targetLabel: kubernetes_pod_name
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          separator: ;
+          sourceLabels:
+            - __meta_kubernetes_pod_node_name
+          targetLabel: node_name
+        - action: replace
+          regex: (.*)
+          replacement: $1
+          separator: ;
+          sourceLabels:
+            - __meta_kubernetes_pod_host_ip
+          targetLabel: node_ip
+  selector:
+    matchExpressions:
+      - key: strimzi.io/kind
+        operator: In
+        values:
+          - Kafka
+{{- end }}

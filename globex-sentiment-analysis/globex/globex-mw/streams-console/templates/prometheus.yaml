@@ -1,0 +1,30 @@
+---
+{{- if eq .Values.scope.namespace true -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: {{ include "streams-console.name" . }}-prometheus
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+  labels:
+    {{- include "streams-console.labels" . | nindent 4 }}
+spec:
+  evaluationInterval: 30s
+  serviceAccountName: {{ include "streams-console.name" . }}-prometheus
+  serviceMonitorSelector: {}
+  resources:
+    requests:
+      memory: 400Mi
+  portName: web
+  enableAdminAPI: false
+  podMonitorSelector:
+    matchLabels:
+      app: {{ include "streams-console.name" . }}-monitor
+  additionalScrapeConfigs:
+    key: prometheus-additional.yaml
+    name: {{ include "streams-console.name" . }}-scrape-configs
+  scrapeInterval: 30s
+  replicas: 1
+{{- end }}

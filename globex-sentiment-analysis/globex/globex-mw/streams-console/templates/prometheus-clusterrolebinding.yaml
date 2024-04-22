@@ -1,0 +1,21 @@
+{{- if ne .Values.scope.namespace true -}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    {{- include "streams-console.labels" . | nindent 4 }}
+  name: {{ include "streams-console.name" . }}-prometheus-crb-{{ .Values.user }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "streams-console.name" . }}-prometheus-cr-{{ .Values.user }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "streams-console.name" . }}-prometheus
+    {{- if .Values.namespace }}
+    namespace: {{ .Values.namespace }}
+    {{- else }}
+    namespace: {{ .Release.Namespace }}
+    {{- end }}
+{{- end }}

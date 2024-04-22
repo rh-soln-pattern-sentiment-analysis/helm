@@ -1,0 +1,19 @@
+{{- if ne .Values.scope.namespace true -}}
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    {{- include "streams-console.labels" . | nindent 4 }}
+  name: {{ include "streams-console.name" . }}-cr-{{ .Values.user }}
+rules:
+  - verbs:
+      - get
+      - watch
+      - list
+    apiGroups:
+      - kafka.strimzi.io
+    resources:
+      - kafkas
+      - kafkatopics
+{{- end }}

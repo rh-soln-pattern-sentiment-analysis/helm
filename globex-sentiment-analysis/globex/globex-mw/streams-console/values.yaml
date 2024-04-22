@@ -1,0 +1,78 @@
+replicaCount: 1
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  api:
+    repository: quay.io/eyefloaters/console-api
+    pullPolicy: IfNotPresent
+    tag: 0.0.32
+  ui:
+    repository: quay.io/eyefloaters/ui
+    pullPolicy: IfNotPresent
+    tag: 0.0.32
+
+podSecurityContext: 
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+  containerPort: 3000
+  portName: http-ui
+
+route:
+  host:
+  tlsEnabled: true
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+resources: 
+  api: {}
+
+namespace:
+subdomain:
+
+kafka:
+  name: kafka
+  bootstrapServer: 
+  authentication:
+    saslMechanism: SCRAM-SHA-512
+    securityProtocol: SASL_PLAINTEXT
+  authorization: simple
+
+prometheus:
+  subscription:
+    channel: beta
+    installPlanApproval: Automatic
+    name: rhods-prometheus-operator
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
+    argocd:
+      enabled: true
+      syncwave: "-1"
+
+console:
+  nextAuthSecret:
+  sessionSecret:
+  logLevel: error
+
+user: user
+
+scope:
+  namespace: true

@@ -1,0 +1,43 @@
+{{- if eq .Values.scope.namespace true -}}
+{{- if eq .Values.kafka.authentication.saslMechanism "SCRAM-SHA-512" -}}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  labels:
+    {{- include "streams-console.labels" . | nindent 4 }}
+    strimzi.io/cluster: {{ .Values.kafka.name }}
+  name: {{ include "streams-console.name" . }}-kafka-user
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+spec:
+  authentication:
+    type: scram-sha-512
+  {{- if eq .Values.kafka.authorization "simple" }}
+  authorization:
+    type: simple  
+    acls:
+      - operations:
+          - Describe
+          - DescribeConfigs
+        resource:
+          type: cluster
+      - operations:
+          - Read
+          - Describe
+          - DescribeConfigs
+        resource:
+          name: '*'
+          patternType: literal
+          type: topic
+      - operations:
+          - Read
+          - Describe
+        resource:
+          name: '*'
+          patternType: literal
+          type: group
+  {{- end }}
+{{- end }}
+{{- end }}

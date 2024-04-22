@@ -14,3 +14,7 @@ dependencies:
   - name: kafdrop
     version: 0.1.0
     repository: file://kafdrop
+  - name: streams-console
+    version: 0.1.0
+    repository: file://streams-console
+

@@ -1,0 +1,95 @@
+{{- if eq .Values.scope.namespace true -}}
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ include "streams-console.name" . }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+  labels:
+    {{- include "streams-console.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "streams-console.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "streams-console.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}      
+      serviceAccountName: {{ include "streams-console.serviceAccountName" . }}
+      containers:
+        - name: console-api
+          image: "{{ .Values.image.api.repository }}:{{ .Values.image.api.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.api.pullPolicy }}
+          ports:
+            - name: http-api
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: KAFKA_SECURITY_PROTOCOL
+              value: {{ .Values.kafka.authentication.securityProtocol }}
+            - name: KAFKA_SASL_MECHANISM
+              value: {{ .Values.kafka.authentication.saslMechanism }}
+            - name: CONSOLE_KAFKA_CLUSTER1
+              {{- if .Values.namespace }}
+              value: {{ .Values.namespace }}/{{ .Values.kafka.name }}
+              {{- else }}
+              value: {{ .Release.Namespace }}/{{ .Values.kafka.name }}
+              {{- end }}              
+            - name: CONSOLE_KAFKA_CLUSTER1_BOOTSTRAP_SERVERS
+              value: {{ .Values.kafka.bootstrapServer }}
+            - name: CONSOLE_KAFKA_CLUSTER1_SASL_JAAS_CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "streams-console.name" . }}-kafka-user
+                  key: sasl.jaas.config
+          resources:
+            {{- toYaml .Values.resources.api | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+        - name: console-ui
+          image: "{{ .Values.image.ui.repository }}:{{ .Values.image.ui.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.ui.pullPolicy }}
+          ports:
+            - name: http-ui
+              containerPort: {{ .Values.service.containerPort }}
+              protocol: TCP
+          env:
+            - name: NEXTAUTH_SECRET
+              value: {{ .Values.console.nextAuthSecret }}
+            - name: SESSION_SECRET
+              value: {{ .Values.console.sessionSecret }}
+            - name: NEXTAUTH_URL
+              {{- if .Values.route.host }}
+              value: "https://{{ .Values.route.host }}"
+              {{- else }}
+              {{- if .Values.namespace }}
+              value: "https://{{ include "streams-console.name" . }}-{{ .Values.namespace }}.{{ .Values.subdomain }}"
+              {{- else }}
+              value: "https://{{ include "streams-console.name" . }}-{{ .Release.Namespace }}.{{ .Values.subdomain }}"
+              {{- end }}
+              {{- end }}
+            - name: BACKEND_URL
+              value: 'http://127.0.0.1:8080'
+            - name: CONSOLE_METRICS_PROMETHEUS_URL
+              {{- if .Values.namespace }}
+              value: "http://prometheus-operated.{{ .Values.namespace }}.svc.cluster.local:9090"
+              {{- else }}
+              value: 'http://prometheus-operated.{{ .Release.Namespace }}.svc.cluster.local:9090'
+              {{- end }}
+            - name: LOG_LEVEL
+              value: {{ .Values.console.logLevel }}      
+          resources:
+            {{- toYaml .Values.resources.ui | nindent 12 }}         
+          volumeMounts:
+            - name: cache
+              mountPath: /app/.next/cache
+      volumes:
+        - name: cache
+          emptyDir: {}
+{{- end }}
