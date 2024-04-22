@@ -7,7 +7,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 podAnnotations:
-  autoscaling.knative.dev/min-scale: '1'
+  autoscaling.knative.dev/min-scale: '0'
 
 resources:
   limits:
