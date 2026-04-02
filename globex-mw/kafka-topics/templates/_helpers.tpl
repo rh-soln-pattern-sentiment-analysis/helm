@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "rhsso-db.name" -}}
+{{- define "kafka-topics.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "rhsso-db.fullname" -}}
+{{- define "kafka-topics.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "rhsso-db.chart" -}}
+{{- define "kafka-topics.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "rhsso-db.labels" -}}
-helm.sh/chart: {{ include "rhsso-db.chart" . }}
-{{ include "rhsso-db.selectorLabels" . }}
+{{- define "kafka-topics.labels" -}}
+helm.sh/chart: {{ include "kafka-topics.chart" . }}
+{{ include "kafka-topics.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,26 +45,36 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "rhsso-db.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "rhsso-db.name" . }}
+{{- define "kafka-topics.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "kafka-topics.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "rhsso-db.serviceAccountName" -}}
+{{- define "kafka-topics.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "rhsso-db.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "kafka-topics.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
 {{/*
+Find the name of the OpenShift domain
+*/}}
+{{- define "kafka-topics.ocpDomain" -}}
+{{- $ingresscontroller := (lookup "operator.openshift.io/v1" "IngressController" "openshift-ingress-operator" "default") | default dict }}
+{{- $status := (get $ingresscontroller "status") | default dict }}
+{{- $ocpDomain := (get $status "domain") | default dict }}
+{{- printf "%s" $ocpDomain }}
+{{- end }}
+
+{/*
 ArgoCD Syncwave
 */}}
-{{- define "rhsso-db.argocd-syncwave" -}}
+{{- define "kafka-topics.argocd-syncwave" -}}
 {{- if .Values.argocd }}
 {{- if and (.Values.argocd.syncwave) (.Values.argocd.enabled) -}}
 argocd.argoproj.io/sync-wave: "{{ .Values.argocd.syncwave }}"
@@ -74,26 +84,4 @@ argocd.argoproj.io/sync-wave: "{{ .Values.argocd.syncwave }}"
 {{- else }}
 {{- "{}" }}
 {{- end }}
-{{- end }}
-
-{{/* 
-Admin password
-*/}}
-{{- define "rhsso-db.admin-password" -}}
-{{- if .Values.pgsql.adminPassword }}
-{{- .Values.pgsql.adminPassword }}
-{{- else }}
-{{- $secretName := (include "rhsso-db.name" .) }}
-{{- $secretObj := (lookup "v1" "Secret" .Release.Namespace $secretName) | default dict }}
-{{- $secretData := (get $secretObj "data") | default dict }}
-{{- $adminSecret := (get $secretData "database-admin-password") | default (randAlpha 12 | b64enc) }}
-{{- $adminSecret | quote }}
-{{- end }}
-{{- end }}
-
-{{/*
-Expand the name of the chart.
-*/}}
-{{- define "rhsso-db.secretName" -}}
-{{- printf "%s-db-secret" .Values.keycloak.name }}
 {{- end }}

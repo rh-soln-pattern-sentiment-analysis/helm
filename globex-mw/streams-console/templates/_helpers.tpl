@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "realm.name" -}}
+{{- define "streams-console.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "realm.fullname" -}}
+{{- define "streams-console.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "realm.chart" -}}
+{{- define "streams-console.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "realm.labels" -}}
-helm.sh/chart: {{ include "realm.chart" . }}
-{{ include "realm.selectorLabels" . }}
+{{- define "streams-console.labels" -}}
+helm.sh/chart: {{ include "streams-console.chart" . }}
+{{ include "streams-console.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "realm.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "realm.name" . }}
+{{- define "streams-console.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "streams-console.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "realm.serviceAccountName" -}}
+{{- define "streams-console.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "realm.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "streams-console.name" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -64,10 +64,10 @@ Create the name of the service account to use
 {{/*
 ArgoCD Syncwave
 */}}
-{{- define "realm.hook.argocd-syncwave" -}}
-{{- if .Values.hook.argocd }}
-{{- if and (.Values.hook.argocd.syncwave) (.Values.hook.argocd.enabled) -}}
-argocd.argoproj.io/sync-wave: "{{ .Values.hook.argocd.syncwave }}"
+{{- define "prometheus-subscription.argocd-syncwave" -}}
+{{- if .Values.prometheus.subscription.argocd }}
+{{- if and (.Values.prometheus.subscription.argocd.syncwave) (.Values.prometheus.subscription.argocd.enabled) -}}
+argocd.argoproj.io/sync-wave: "{{ .Values.prometheus.subscription.argocd.syncwave }}"
 {{- else }}
 {{- "{}" }}
 {{- end }}
@@ -75,3 +75,4 @@ argocd.argoproj.io/sync-wave: "{{ .Values.hook.argocd.syncwave }}"
 {{- "{}" }}
 {{- end }}
 {{- end }}
+

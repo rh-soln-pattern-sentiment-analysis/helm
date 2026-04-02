@@ -1,0 +1,67 @@
+nameOverride: "kafka"
+
+kafka:
+  enabled: true
+  version: 4.1.0
+  metadataVersion: 4.1.0-IV0
+  broker:
+    replicas: 3
+  controller:
+    enabled: true
+    replicas: 3
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 200M
+  config:
+    autoCreateTopics: false
+    defaultReplicationFactor: 3
+    offsetsTopicReplicationFactor: 3
+    transactionStateLogReplicationFactor: 3
+    transactionStateLogMinIsr: 2
+    minInsyncReplicas: 2
+  entityOperator:
+    topicOperator:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 500M
+        requests:
+          cpu: 250m
+          memory: 250M
+    userOperator:
+      resources:
+        limits:
+          cpu: 250m
+          memory: 250M
+        requests:
+          cpu: 150m
+          memory: 150M
+  resources:
+    limits:
+      cpu: '1'
+      memory: 2G
+    requests:
+      cpu: 300m
+      memory: 500M
+  metrics:
+    enabled: false
+
+bootstrapServer: 
+
+namespace:
+
+authentication:
+  clientId: globex
+  clientSecret: globex
+  securityProtocol: SASL_PLAINTEXT
+  saslMechanism: SCRAM-SHA-512
+
+authorization: simple
+
+argocd:
+  enabled: true
+  syncwave: "-2"

@@ -1,0 +1,21 @@
+apiVersion: console.streamshub.github.com/v1alpha1
+kind: Console
+metadata:
+  name: {{ include "streams-console.name" . }}-{{ .Values.user }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+  labels:
+    {{- include "streams-console.labels" . | nindent 4 }}
+spec:
+  hostname: {{ include "streams-console.name" . }}-{{ .Values.user }}.{{ .Values.subdomain }}
+  kafkaClusters:
+    - name: {{ .Values.kafka.name }}
+      namespace: {{ .Values.namespace }}
+      listener: tls
+      properties:
+        values: []
+        valuesFrom: []
+      credentials:
+        kafkaUser:
+          name: {{ include "streams-console.name" . }}-kafka-user

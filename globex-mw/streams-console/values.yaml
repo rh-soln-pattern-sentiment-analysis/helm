@@ -1,0 +1,16 @@
+replicaCount: 1
+
+nameOverride: ""
+fullnameOverride: ""
+
+namespace:
+subdomain:
+
+kafka:
+  name: kafka
+  authentication:
+    saslMechanism: SCRAM-SHA-512
+    securityProtocol: SASL_PLAINTEXT
+  authorization: simple
+
+user: user

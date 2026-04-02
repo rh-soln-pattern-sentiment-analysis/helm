@@ -1,0 +1,12 @@
+dependencies:
+- name: kafka-broker
+  repository: file://kafka-broker
+  version: 0.1.0
+- name: kafka-topics
+  repository: file://kafka-topics
+  version: 0.1.0
+- name: kafdrop
+  repository: file://kafdrop
+  version: 0.1.0
+digest: sha256:278460b5bdcb26864d62bda55ea65ada76957ccbaad6f88c44454101040dfda9
+generated: "2023-04-07T16:50:22.067861445+02:00"

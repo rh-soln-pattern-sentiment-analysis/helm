@@ -1,0 +1,25 @@
+
+
+kafka:
+  cluster: kafka
+  replicationFactor: 3
+  topics:
+    - name: globex.tracking
+      partitions: 1
+      retention: -1
+    - name: globex.updates.public.customer
+      partitions: 1
+      retention: -1
+    - name: globex.updates.public.orders
+      partitions: 1
+      retention: -1
+    - name: globex.updates.public.line_item
+      partitions: 1
+      retention: -1
+    - name: globex.order-aggregated
+      partitions: 1
+      retention: -1
+  namespace: 
+argocd:
+  enabled: true
+  syncwave: "-2"
