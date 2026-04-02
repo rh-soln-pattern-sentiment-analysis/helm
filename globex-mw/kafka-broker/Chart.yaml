@@ -1,5 +1,0 @@
-apiVersion: v2
-name: kafka-broker
-description: A Helm chart for AMQ Streams broker
-type: application
-version: 0.1.0

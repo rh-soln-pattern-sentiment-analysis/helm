@@ -34,4 +34,4 @@ dependencies:
     repository: file://globex-mw/kafka-topics
   - name: kafdrop
     version: 0.1.0
-    repository: file://globex-mw/kafdrop
+    repository: file://globex-mw/streams-console

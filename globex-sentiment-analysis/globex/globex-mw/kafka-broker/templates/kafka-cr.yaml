@@ -1,3 +1,4 @@
+{{- if .Values.kafka.enabled -}}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
@@ -8,11 +9,13 @@ metadata:
   labels:
     {{- include "kafka-broker.labels" . | nindent 4 }}
   annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
     {{- include "kafka-broker.argocd-syncwave" . | nindent 4 }}
 spec:
   kafka:
-    replicas: {{ .Values.kafka.cluster.replicas }}
     version: {{ .Values.kafka.version }}
+    metadataVersion: {{ .Values.kafka.metadataVersion }}
     {{- if eq .Values.authorization "simple" }}
     authorization:
       type: simple
@@ -29,23 +32,21 @@ spec:
       tls: true
       {{- include "kafka-broker.authentication" . | nindent 6 }}
     config:
+      allow.everyone.if.no.acl.found: 'true'
       auto.create.topics.enable: {{ .Values.kafka.config.autoCreateTopics }}
       offsets.topic.replication.factor: {{ .Values.kafka.config.offsetsTopicReplicationFactor }}
       transaction.state.log.min.isr: {{ .Values.kafka.config.transactionStateLogMinIsr }}
       transaction.state.log.replication.factor: {{ .Values.kafka.config.transactionStateLogReplicationFactor }}
       default.replication.factor: {{ .Values.kafka.config.defaultReplicationFactor }}
       min.insync.replicas: {{ .Values.kafka.config.minInsyncReplicas }}
-      inter.broker.protocol.version: '{{ .Values.kafka.config.interBrokerProtocolVersion }}'
-    storage:
-      type: ephemeral
-    resources:
-      {{- toYaml .Values.kafka.resources | nindent 6 }}
-  zookeeper:
-    replicas: {{ .Values.kafka.zookeeper.replicas }}
-    storage:
-      type: ephemeral
-    resources:
-      {{- toYaml .Values.kafka.zookeeper.resources | nindent 6 }}
+    {{- if .Values.kafka.metrics.enabled}}
+    metricsConfig:
+      type: jmxPrometheusExporter
+      valueFrom:
+        configMapKeyRef:
+          key: kafka-metrics-config.yml
+          name: {{ include "kafka-broker.name" . }}-metrics
+    {{- end }}
   entityOperator:
     topicOperator:
       resources:
@@ -53,3 +54,4 @@ spec:
     userOperator:
       resources:
         {{- toYaml .Values.kafka.entityOperator.userOperator.resources | nindent 8 }}
+{{- end }}
